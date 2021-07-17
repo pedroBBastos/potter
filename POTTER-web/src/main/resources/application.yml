@@ -1,0 +1,27 @@
+application:
+  title: Challenger Potter
+  version: v0.0.1-SNAPSHOT
+
+server:
+  port: 8080
+  compression:
+    enabled: true
+    mime-types: 'application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript'
+  servlet:
+    context-path: /challenge
+---
+
+spring:
+  liquibase:
+    change-log: classpath:/changelog/db-changelog-master.xml
+  datasource:
+    # url: jdbc:h2:mem:challengedb
+    url: jdbc:h2:file:../data/challengedb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-plataform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true

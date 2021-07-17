@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>POTTER-service</artifactId>
-    <version>${potter.version}</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.challenge</groupId>
             <artifactId>POTTER-model</artifactId>
-            <version>${potter.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
