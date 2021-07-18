@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Classe para representação de um personagem de Harry Potter
@@ -39,4 +40,12 @@ public class PersonagemEntity implements BaseEntity {
 
     @Column(name = "patronus")
     private String patronus;
+
+    @Column(name = "data_criacao", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataCriacao;
+
+    @Column(name = "data_edicao", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataEdicao;
 }

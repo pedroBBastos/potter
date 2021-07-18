@@ -21,4 +21,19 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="PedroBastos (generated)" id="1626639362211-1">
+        <addColumn tableName="personagem">
+            <column name="data_criacao" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="PedroBastos (generated)" id="1626639362211-2">
+        <addColumn tableName="personagem">
+            <column name="data_edicao" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
