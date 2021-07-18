@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PersonagemService extends CrudService<PersonagemEntity> {
-    protected PersonagemService(PersonagemRepository personagemRepository) {
+    public PersonagemService(PersonagemRepository personagemRepository) {
         super(personagemRepository);
     }
 }

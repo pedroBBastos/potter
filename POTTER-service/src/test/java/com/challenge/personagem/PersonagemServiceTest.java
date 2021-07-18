@@ -2,6 +2,7 @@ package com.challenge.personagem;
 
 import com.challenge.data.DataGenerator;
 import com.challenge.entity.PersonagemEntity;
+import com.challenge.exception.ParametroInvalidoException;
 import com.challenge.repository.PersonagemRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,17 +37,15 @@ public class PersonagemServiceTest {
     @Test
     public void teste02_naoDeveSalvarPersonagemNulo() {
         PersonagemEntity personagemEntity = null;
-        when(personagemRepository.save(isNull()))
-                .thenThrow(new IllegalArgumentException("Entity must not be null."));
 
         try {
             personagemService.save(personagemEntity);
             fail();
-        } catch (IllegalArgumentException exception) {
-            assertEquals("Entity must not be null.", exception.getMessage());
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Entidade fornecida não pode ser nula", exception.getMessage());
         }
 
-        verify(personagemRepository, times(1)).save(isNull());
+        verify(personagemRepository, times(0)).save(isNull());
     }
 
     @Test
@@ -76,17 +75,14 @@ public class PersonagemServiceTest {
 
     @Test
     public void teste06_deveVerificarIdNuloEmBuscaPorId() {
-        when(personagemRepository.findById(isNull()))
-                .thenThrow(new IllegalArgumentException("The given id must not be null!"));
-
         try {
             personagemService.findById(null);
             fail();
-        } catch (IllegalArgumentException exception) {
-            assertEquals("The given id must not be null!", exception.getMessage());
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Id fornecido não pode ser nulo", exception.getMessage());
         }
 
-        verify(personagemRepository, times(1)).findById(isNull());
+        verify(personagemRepository, times(0)).findById(isNull());
     }
 
     @Test
@@ -108,38 +104,32 @@ public class PersonagemServiceTest {
     @Test
     public void teste09_naoDeveDeletarPersonagemNulo() {
         PersonagemEntity personagemEntity = null;
-        doThrow(new IllegalArgumentException("Entity must not be null."))
-                .when(personagemRepository).delete(isNull());
 
         try {
             personagemService.delete(personagemEntity);
             fail();
-        } catch (IllegalArgumentException exception) {
-            assertEquals("Entity must not be null.", exception.getMessage());
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Entidade fornecida não pode ser nula", exception.getMessage());
         }
 
-        verify(personagemRepository, times(1)).delete(isNull());
+        verify(personagemRepository, times(0)).delete(isNull());
     }
 
     @Test
-    public void teste09_deveDeletarPersonagemPorIdComSucesso() {
+    public void teste10_deveDeletarPersonagemPorIdComSucesso() {
         personagemService.deleteById(1L);
         verify(personagemRepository, times(1)).deleteById(1L);
     }
 
     @Test
-    public void teste10_deveTratarDeleteIdNulo() {
-
-        doThrow(new IllegalArgumentException("The given id must not be null!"))
-                .when(personagemRepository).deleteById(isNull());
-
+    public void teste11_deveTratarDeleteIdNulo() {
         try {
             personagemService.deleteById(null);
             fail();
-        } catch (IllegalArgumentException exception) {
-            assertEquals("The given id must not be null!", exception.getMessage());
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Id fornecido não pode ser nulo", exception.getMessage());
         }
 
-        verify(personagemRepository, times(1)).deleteById(isNull());
+        verify(personagemRepository, times(0)).deleteById(isNull());
     }
 }
