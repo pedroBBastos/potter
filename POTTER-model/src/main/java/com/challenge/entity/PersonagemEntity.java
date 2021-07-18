@@ -1,16 +1,23 @@
 package com.challenge.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+/**
+ * Classe para representação de um personagem de Harry Potter
+ * @author PedroBastos
+ */
 
 @Entity
 @Data
 @Table(name = "personagem")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PersonagemEntity implements BaseEntity {
 
     @Id
