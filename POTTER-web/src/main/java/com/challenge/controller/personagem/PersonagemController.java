@@ -28,8 +28,7 @@ public class PersonagemController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PersonagemDTO> updatePersonagem(@RequestBody PersonagemUpdateDTO personagemUpdateDTO) {
-        // TODO
-        return null;
+        return new ResponseEntity<>(this.personagemService.atualizarPersonagem(personagemUpdateDTO), HttpStatus.OK);
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

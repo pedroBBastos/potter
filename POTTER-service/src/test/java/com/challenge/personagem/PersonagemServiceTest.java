@@ -2,15 +2,14 @@ package com.challenge.personagem;
 
 import com.challenge.data.DataGenerator;
 import com.challenge.dto.PersonagemCriacaoDTO;
+import com.challenge.dto.PersonagemUpdateDTO;
 import com.challenge.entity.PersonagemEntity;
 import com.challenge.exception.ParametroInvalidoException;
 import com.challenge.exception.PersonagemException;
 import com.challenge.repository.PersonagemRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -29,6 +28,9 @@ public class PersonagemServiceTest {
     private ModelMapper modelMapper;
     @InjectMocks
     private PersonagemService personagemService;
+
+    @Captor
+    private ArgumentCaptor<PersonagemEntity> personagemEntityCaptor;
 
     @Test
     public void teste01_deveSalvarPersonagemViaDTOComSucesso() {
@@ -66,6 +68,56 @@ public class PersonagemServiceTest {
             fail();
         } catch (PersonagemException exception) {
             assertEquals("Personagem já existente!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
+        verify(modelMapper, times(0)).map(any(), any());
+    }
+
+    @Test
+    public void teste04_deveAtualizarPersonagemComSucesso() {
+        PersonagemUpdateDTO personagemUpdateDTO = DataGenerator.getPersonagemUpdateDTO();
+        PersonagemEntity personagemEmBanco = DataGenerator.getPersonagem();
+        when(personagemRepository.existsByNameAndHouse("Harry Potter","Gryffindor"))
+                .thenReturn(true);
+        when(personagemRepository.findByNameAndHouse("Harry Potter","Gryffindor"))
+                .thenReturn(personagemEmBanco);
+        when(personagemRepository.save(any())).thenReturn(DataGenerator.getPersonagem());
+
+        personagemUpdateDTO.setPatronus("Patronous-updated");
+        personagemService.atualizarPersonagem(personagemUpdateDTO);
+
+        verify(personagemRepository).save(personagemEntityCaptor.capture());
+
+        PersonagemEntity capturedPersonagem = personagemEntityCaptor.getValue();
+        assertEquals("Patronous-updated", capturedPersonagem.getPatronus());
+    }
+
+    @Test
+    public void teste05_naoDeveAtualizarPersonagemUpdateDTONulo() {
+
+        try {
+            personagemService.atualizarPersonagem(null);
+            fail();
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Objeto nulo!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
+        verify(modelMapper, times(0)).map(any(), any());
+    }
+
+    @Test
+    public void teste06_deveValidarPersonagemExistenteEmAtualizacao() {
+        PersonagemUpdateDTO personagemUpdateDTO = DataGenerator.getPersonagemUpdateDTO();
+        when(personagemRepository.existsByNameAndHouse("Harry Potter","Gryffindor"))
+                .thenReturn(false);
+
+        try {
+            personagemService.atualizarPersonagem(personagemUpdateDTO);
+            fail();
+        } catch (PersonagemException exception) {
+            assertEquals("Personagem não encontrado!", exception.getMessage());
         }
 
         verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
