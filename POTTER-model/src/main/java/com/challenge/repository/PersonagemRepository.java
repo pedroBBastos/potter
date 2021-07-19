@@ -11,4 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PersonagemRepository extends JpaRepository<PersonagemEntity, Long> {
+
+    boolean existsByNameAndHouse(String name, String house);
+    PersonagemEntity findByNameAndHouse(String name, String house);
 }

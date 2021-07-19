@@ -36,4 +36,8 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="PedroBastos (generated)" id="1626643504006-1">
+        <addUniqueConstraint columnNames="name, house" constraintName="UKhr1qgsfb308321lt8itimnl8b" tableName="personagem"/>
+    </changeSet>
+
 </databaseChangeLog>

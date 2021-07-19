@@ -15,7 +15,8 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "personagem")
+@Table(name = "personagem",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "house"})})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

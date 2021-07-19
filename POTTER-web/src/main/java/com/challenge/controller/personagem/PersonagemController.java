@@ -38,20 +38,20 @@ public class PersonagemController {
         return null;
     }
 
-    @GetMapping(value = "/findAll", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PersonagemDTO>> findAll() {
+        // TODO
+        return null;
+    }
+
+    @GetMapping(value = "{house}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PersonagemDTO> findByHouse(@PathVariable(value = "house") String house) {
         // TODO
         return null;
     }
 
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PersonagemDTO> findByObject(@RequestBody PersonagemCriacaoDTO personagemCriacaoDTO) {
-        // TODO
-        return null;
-    }
-
-    @GetMapping(value = "/findByName/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PersonagemDTO> findByName() {
         // TODO
         return null;
     }

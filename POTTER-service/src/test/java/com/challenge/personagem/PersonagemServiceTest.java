@@ -1,14 +1,18 @@
 package com.challenge.personagem;
 
 import com.challenge.data.DataGenerator;
+import com.challenge.dto.PersonagemCriacaoDTO;
 import com.challenge.entity.PersonagemEntity;
 import com.challenge.exception.ParametroInvalidoException;
+import com.challenge.exception.PersonagemException;
 import com.challenge.repository.PersonagemRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.modelmapper.ModelMapper;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.List;
@@ -24,6 +28,8 @@ public class PersonagemServiceTest {
 
     @Mock
     private PersonagemRepository personagemRepository;
+    @Spy
+    private ModelMapper modelMapper;
     @InjectMocks
     private PersonagemService personagemService;
 
@@ -131,5 +137,47 @@ public class PersonagemServiceTest {
         }
 
         verify(personagemRepository, times(0)).deleteById(isNull());
+    }
+
+    @Test
+    public void teste12_deveSalvarPersonagemViaDTOComSucesso() {
+        PersonagemCriacaoDTO personagemCriacaoDTO = DataGenerator.getPersonagemCriacaoDTO();
+        when(personagemRepository.save(any())).thenReturn(DataGenerator.getPersonagem());
+
+        personagemService.criarNovoPersonagem(personagemCriacaoDTO);
+
+        verify(personagemRepository, times(1)).save(any(PersonagemEntity.class));
+        verify(modelMapper, times(2)).map(any(), any());
+    }
+
+    @Test
+    public void teste13_naoDeveSalvarPersonagemDTONulo() {
+
+        try {
+            personagemService.criarNovoPersonagem(null);
+            fail();
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Objeto nulo!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
+        verify(modelMapper, times(0)).map(any(), any());
+    }
+
+    @Test
+    public void teste14_naoDeveSalvarPersonagemDTOJaExistente() {
+        PersonagemCriacaoDTO personagemCriacaoDTO = DataGenerator.getPersonagemCriacaoDTO();
+        when(personagemRepository.existsByNameAndHouse("Harry Potter","Gryffindor"))
+                .thenReturn(true);
+
+        try {
+            personagemService.criarNovoPersonagem(personagemCriacaoDTO);
+            fail();
+        } catch (PersonagemException exception) {
+            assertEquals("Personagem já existente!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
+        verify(modelMapper, times(0)).map(any(), any());
     }
 }
