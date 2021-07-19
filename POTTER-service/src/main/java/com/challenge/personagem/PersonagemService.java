@@ -26,19 +26,22 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
 
     public PersonagemDTO criarNovoPersonagem(PersonagemCriacaoDTO personagemCriacaoDTO) {
         this.validateCriacaoTO(personagemCriacaoDTO);
-        PersonagemEntity saved = this.save(modelMapper.map(personagemCriacaoDTO, PersonagemEntity.class));
-        return modelMapper.map(saved, PersonagemDTO.class);
+        this.save(modelMapper.map(personagemCriacaoDTO, PersonagemEntity.class));
+        return personagemCriacaoDTO;
     }
 
     public PersonagemDTO atualizarPersonagem(PersonagemUpdateDTO personagemUpdateDTO) {
-        this.validateUpdateTO(personagemUpdateDTO);
-        PersonagemEntity updated = this.atualizarPersonagemByDTO(personagemUpdateDTO);
-        return modelMapper.map(this.save(updated), PersonagemDTO.class);
+        PersonagemEntity personagem = this.validateModificacao(personagemUpdateDTO);
+        personagem = this.atualizarPersonagemByDTO(personagem, personagemUpdateDTO);
+        return modelMapper.map(this.save(personagem), PersonagemDTO.class);
     }
 
-    private PersonagemEntity atualizarPersonagemByDTO(PersonagemUpdateDTO personagemUpdateDTO) {
-        var personagemEntity = this.personagemRepository
-                .findByNameAndHouse(personagemUpdateDTO.getName(), personagemUpdateDTO.getHouse());
+    public void deletePersonagem(PersonagemDTO personagemDTO) {
+        this.delete(this.validateModificacao(personagemDTO));
+    }
+
+    private PersonagemEntity atualizarPersonagemByDTO(PersonagemEntity personagemEntity,
+                                                      PersonagemUpdateDTO personagemUpdateDTO) {
         PersonagemEntity atualizado = modelMapper.map(personagemUpdateDTO, PersonagemEntity.class);
         atualizado.setId(personagemEntity.getId());
         atualizado.setDataCriacao(personagemEntity.getDataCriacao());
@@ -50,17 +53,6 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
         this.validatePersonagemExistente(personagemCriacaoDTO);
     }
 
-    private void validateUpdateTO(PersonagemUpdateDTO personagemCriacaoDTO) {
-        this.validateNullTO(personagemCriacaoDTO);
-        this.validatePersonagemInexistente(personagemCriacaoDTO);
-    }
-
-    private void validateNullTO(PersonagemDTO personagemDTO) {
-        if(personagemDTO == null) {
-            throw new ParametroInvalidoException("Objeto nulo!");
-        }
-    }
-
     private void validatePersonagemExistente(PersonagemCriacaoDTO personagemCriacaoDTO) {
         if(this.personagemRepository.existsByNameAndHouse(personagemCriacaoDTO.getName(),
                 personagemCriacaoDTO.getHouse())) {
@@ -68,10 +60,20 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
         }
     }
 
-    private void validatePersonagemInexistente(PersonagemUpdateDTO personagemUpdateDTO) {
-        if(!this.personagemRepository.existsByNameAndHouse(personagemUpdateDTO.getName(),
-                personagemUpdateDTO.getHouse())) {
+    private PersonagemEntity validateModificacao(PersonagemDTO personagemDTO) {
+        this.validateNullTO(personagemDTO);
+
+        var personagemEntity = this.personagemRepository.findByNameAndHouse(personagemDTO.getName(),
+                personagemDTO.getHouse());
+        if(personagemEntity == null)
             throw new PersonagemException("Personagem não encontrado!");
+
+        return personagemEntity;
+    }
+
+    private void validateNullTO(PersonagemDTO personagemDTO) {
+        if(personagemDTO == null) {
+            throw new ParametroInvalidoException("Objeto nulo!");
         }
     }
 }

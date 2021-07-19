@@ -33,8 +33,8 @@ public class PersonagemController {
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deletePersonagem(@RequestBody PersonagemDTO personagemDTO) {
-        // TODO
-        return null;
+        this.personagemService.deletePersonagem(personagemDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

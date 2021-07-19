@@ -2,6 +2,7 @@ package com.challenge.personagem;
 
 import com.challenge.data.DataGenerator;
 import com.challenge.dto.PersonagemCriacaoDTO;
+import com.challenge.dto.PersonagemDTO;
 import com.challenge.dto.PersonagemUpdateDTO;
 import com.challenge.entity.PersonagemEntity;
 import com.challenge.exception.ParametroInvalidoException;
@@ -40,7 +41,7 @@ public class PersonagemServiceTest {
         personagemService.criarNovoPersonagem(personagemCriacaoDTO);
 
         verify(personagemRepository, times(1)).save(any(PersonagemEntity.class));
-        verify(modelMapper, times(2)).map(any(), any());
+        verify(modelMapper, times(1)).map(any(), any());
     }
 
     @Test
@@ -78,8 +79,6 @@ public class PersonagemServiceTest {
     public void teste04_deveAtualizarPersonagemComSucesso() {
         PersonagemUpdateDTO personagemUpdateDTO = DataGenerator.getPersonagemUpdateDTO();
         PersonagemEntity personagemEmBanco = DataGenerator.getPersonagem();
-        when(personagemRepository.existsByNameAndHouse("Harry Potter","Gryffindor"))
-                .thenReturn(true);
         when(personagemRepository.findByNameAndHouse("Harry Potter","Gryffindor"))
                 .thenReturn(personagemEmBanco);
         when(personagemRepository.save(any())).thenReturn(DataGenerator.getPersonagem());
@@ -110,8 +109,8 @@ public class PersonagemServiceTest {
     @Test
     public void teste06_deveValidarPersonagemExistenteEmAtualizacao() {
         PersonagemUpdateDTO personagemUpdateDTO = DataGenerator.getPersonagemUpdateDTO();
-        when(personagemRepository.existsByNameAndHouse("Harry Potter","Gryffindor"))
-                .thenReturn(false);
+        when(personagemRepository.findByNameAndHouse(any(), any()))
+                .thenReturn(null);
 
         try {
             personagemService.atualizarPersonagem(personagemUpdateDTO);
@@ -121,6 +120,49 @@ public class PersonagemServiceTest {
         }
 
         verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
+        verify(modelMapper, times(0)).map(any(), any());
+    }
+
+    @Test
+    public void teste07_deveDeletarPersonagemComSucesso() {
+        PersonagemDTO personagemDTO = DataGenerator.getPersonagemDTO();
+        PersonagemEntity personagemEmBanco = DataGenerator.getPersonagem();
+        when(personagemRepository.findByNameAndHouse("Harry Potter","Gryffindor"))
+                .thenReturn(personagemEmBanco);
+
+        personagemService.deletePersonagem(personagemDTO);
+
+        verify(personagemRepository, times(1)).delete(any(PersonagemEntity.class));
+    }
+
+    @Test
+    public void teste08_naoDeveDeletarPersonagemDTONulo() {
+
+        try {
+            personagemService.deletePersonagem(null);
+            fail();
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Objeto nulo!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).delete(any(PersonagemEntity.class));
+        verify(modelMapper, times(0)).map(any(), any());
+    }
+
+    @Test
+    public void teste09_deveValidarPersonagemExistenteEmRemocao() {
+        PersonagemDTO personagemDTO = DataGenerator.getPersonagemDTO();
+        when(personagemRepository.findByNameAndHouse(any(), any()))
+                .thenReturn(null);
+
+        try {
+            personagemService.deletePersonagem(personagemDTO);
+            fail();
+        } catch (PersonagemException exception) {
+            assertEquals("Personagem não encontrado!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).delete(any(PersonagemEntity.class));
         verify(modelMapper, times(0)).map(any(), any());
     }
 }
