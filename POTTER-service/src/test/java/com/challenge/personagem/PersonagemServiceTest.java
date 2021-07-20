@@ -179,7 +179,7 @@ public class PersonagemServiceTest {
     @Test
     public void teste10_deveValidarBuscaDeTodosOsPersonagens() {
         when(personagemRepository.findAll()).thenReturn(DataGenerator.getPersonagemList());
-        personagemService.findAllPersonagemDTO(null);
+        personagemService.findAll(null);
         verify(personagemRepository, times(1)).findAll();
         verify(modelMapper, atLeast(1)).map(any(), any());
     }
@@ -187,7 +187,7 @@ public class PersonagemServiceTest {
     @Test
     public void teste11_deveValidarBuscaDeTodosOsPersonagensPorCasa() {
         when(personagemRepository.findAllByHouse("Gryffindor")).thenReturn(DataGenerator.getPersonagemList());
-        personagemService.findAllPersonagemDTO("Gryffindor");
+        personagemService.findAll("Gryffindor");
         verify(personagemRepository, times(1)).findAllByHouse("Gryffindor");
         verify(modelMapper, atLeast(1)).map(any(), any());
     }
@@ -244,17 +244,61 @@ public class PersonagemServiceTest {
 
     @Test
     public void teste15_deveValidarChaveNomeNaoInformadaEmRemocao() {
-        PersonagemDTO personagemUpdateDTO = DataGenerator.getPersonagemDTO();
-        personagemUpdateDTO.setName(null);
+        PersonagemDTO personagemDTO = DataGenerator.getPersonagemDTO();
+        personagemDTO.setName(null);
 
         try {
-            personagemService.deletePersonagem(personagemUpdateDTO);
+            personagemService.deletePersonagem(personagemDTO);
             fail();
         } catch (ParametroInvalidoException exception) {
             assertEquals("Chave 'name' não informada!", exception.getMessage());
         }
 
         verify(personagemRepository, times(0)).delete(any(PersonagemEntity.class));
+        verify(modelMapper, times(0)).map(any(), any());
+    }
+
+    @Test
+    public void teste16_deveBuscarPersonagemPorDTOCOmSucesso() {
+        PersonagemDTO personagemDTO = DataGenerator.getPersonagemDTO();
+        PersonagemEntity personagemEmBanco = DataGenerator.getPersonagem();
+        when(personagemRepository.findByName("Harry Potter"))
+                .thenReturn(personagemEmBanco);
+
+        personagemService.findByPersonagemDTO(personagemDTO);
+
+        verify(personagemRepository, times(1)).findByName("Harry Potter");
+        verify(modelMapper, times(1)).map(any(), any());
+    }
+
+    @Test
+    public void teste17_deveValidarDTONuloAoBuscarPersonagemPorDTO() {
+
+        try {
+            personagemService.findByPersonagemDTO(null);
+            fail();
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Objeto nulo!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).findByName(any());
+        verify(modelMapper, times(0)).map(any(), any());
+    }
+
+    @Test
+    public void teste18_deveValidarNomeNuloAoBuscarPersonagemPorDTO() {
+
+        PersonagemDTO personagemDTO = DataGenerator.getPersonagemDTO();
+        personagemDTO.setName(null);
+
+        try {
+            personagemService.findByPersonagemDTO(personagemDTO);
+            fail();
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Chave 'name' não informada!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).findByName(any());
         verify(modelMapper, times(0)).map(any(), any());
     }
 }

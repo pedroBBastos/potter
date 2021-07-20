@@ -30,7 +30,7 @@ public class PersonagemService {
 
 
     public PersonagemDTO criarNovoPersonagem(PersonagemCriacaoDTO personagemCriacaoDTO) {
-        PersonagemEntity personagemEntity = this.validateCriacaoTO(personagemCriacaoDTO);
+        var personagemEntity = this.validateCriacaoTO(personagemCriacaoDTO);
         return modelMapper.map(this.personagemRepository.save(personagemEntity), PersonagemDTO.class);
     }
 
@@ -46,11 +46,17 @@ public class PersonagemService {
         this.personagemRepository.delete(this.validateModificacao(personagemDTO));
     }
 
-    public List<PersonagemDTO> findAllPersonagemDTO(String house) {
+    public List<PersonagemDTO> findAll(String house) {
         return this.findPersonagemEntities(house).stream()
                 .map(personagemEntity ->
                         modelMapper.map(personagemEntity, PersonagemDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    public PersonagemDTO findByPersonagemDTO(PersonagemDTO personagemDTO) {
+        this.validateNullTO(personagemDTO);
+        this.validateNomeNull(personagemDTO.getName());
+        return modelMapper.map(this.personagemRepository.findByName(personagemDTO.getName()), PersonagemDTO.class);
     }
 
     private List<PersonagemEntity> findPersonagemEntities(String house) {

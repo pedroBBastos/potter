@@ -38,13 +38,11 @@ public class PersonagemController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PersonagemDTO>> findAll(@RequestParam(required = false) String house) {
         // TODO -> filtragem por diversos parametros pela URL: findAll(@RequestParam Map<String, String> params)
-        return new ResponseEntity<>(this.personagemService.findAllPersonagemDTO(house), HttpStatus.OK);
+        return new ResponseEntity<>(this.personagemService.findAll(house), HttpStatus.OK);
     }
 
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PersonagemDTO> findByObject(@RequestBody PersonagemDTO personagemDTO) {
-        // TODO -> filtragem por DTO passado como parametro
-        // TODO -> devolver BAD REQUEST caso nome esteja com nulo ou vazio
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<>(this.personagemService.findByPersonagemDTO(personagemDTO), HttpStatus.OK);
     }
 }
