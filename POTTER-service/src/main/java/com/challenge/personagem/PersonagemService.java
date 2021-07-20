@@ -1,6 +1,5 @@
 package com.challenge.personagem;
 
-import com.challenge.CrudService;
 import com.challenge.client.PotterAPIHousesClient;
 import com.challenge.dto.*;
 import com.challenge.entity.PersonagemEntity;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PersonagemService extends CrudService<PersonagemEntity> {
+public class PersonagemService {
 
     private ModelMapper modelMapper;
     private PersonagemRepository personagemRepository;
@@ -24,7 +23,6 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
     public PersonagemService(PersonagemRepository personagemRepository,
                              ModelMapper modelMapper,
                              PotterAPIHousesClient potterAPIHousesClient) {
-        super(personagemRepository);
         this.personagemRepository = personagemRepository;
         this.modelMapper = modelMapper;
         this.potterAPIHousesClient = potterAPIHousesClient;
@@ -32,18 +30,18 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
 
     public PersonagemDTO criarNovoPersonagem(PersonagemCriacaoDTO personagemCriacaoDTO) {
         this.validateCriacaoTO(personagemCriacaoDTO);
-        this.save(modelMapper.map(personagemCriacaoDTO, PersonagemEntity.class));
+        this.personagemRepository.save(modelMapper.map(personagemCriacaoDTO, PersonagemEntity.class));
         return personagemCriacaoDTO;
     }
 
     public PersonagemDTO atualizarPersonagem(PersonagemUpdateDTO personagemUpdateDTO) {
         PersonagemEntity personagem = this.validateModificacao(personagemUpdateDTO);
         personagem = this.atualizarPersonagemEntityByDTO(personagem, personagemUpdateDTO);
-        return modelMapper.map(this.save(personagem), PersonagemDTO.class);
+        return modelMapper.map(this.personagemRepository.save(personagem), PersonagemDTO.class);
     }
 
     public void deletePersonagem(PersonagemDTO personagemDTO) {
-        this.delete(this.validateModificacao(personagemDTO));
+        this.personagemRepository.delete(this.validateModificacao(personagemDTO));
     }
 
     public List<PersonagemDTO> findAllPersonagemDTO(String house) {
@@ -56,7 +54,7 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
     private List<PersonagemEntity> findPersonagemEntities(String house) {
         List<PersonagemEntity> personagemEntities;
         if(house == null) {
-            personagemEntities = this.findAll();
+            personagemEntities = this.personagemRepository.findAll();
         } else {
             personagemEntities = this.personagemRepository.findAllByHouse(house);
         }
