@@ -11,6 +11,9 @@ import com.challenge.repository.PersonagemRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PersonagemService extends CrudService<PersonagemEntity> {
 
@@ -38,6 +41,13 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
 
     public void deletePersonagem(PersonagemDTO personagemDTO) {
         this.delete(this.validateModificacao(personagemDTO));
+    }
+
+    public List<PersonagemDTO> findAllPersonagemDTO() {
+        return this.findAll().stream()
+                .map(personagemEntity ->
+                        modelMapper.map(personagemEntity, PersonagemDTO.class))
+                .collect(Collectors.toList());
     }
 
     private PersonagemEntity atualizarPersonagemByDTO(PersonagemEntity personagemEntity,

@@ -39,8 +39,7 @@ public class PersonagemController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PersonagemDTO>> findAll() {
-        // TODO
-        return null;
+        return new ResponseEntity<>(this.personagemService.findAllPersonagemDTO(), HttpStatus.OK);
     }
 
     @GetMapping(value = "{house}", produces = MediaType.APPLICATION_JSON_VALUE)

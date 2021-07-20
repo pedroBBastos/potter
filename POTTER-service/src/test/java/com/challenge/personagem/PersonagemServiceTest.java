@@ -165,4 +165,12 @@ public class PersonagemServiceTest {
         verify(personagemRepository, times(0)).delete(any(PersonagemEntity.class));
         verify(modelMapper, times(0)).map(any(), any());
     }
+
+    @Test
+    public void teste10_deveValidarBuscaDeTodosOsPersonagens() {
+        when(personagemRepository.findAll()).thenReturn(DataGenerator.getPersonagemList());
+        personagemService.findAllPersonagemDTO();
+        verify(personagemRepository, times(1)).findAll();
+        verify(modelMapper, atLeast(1)).map(any(), any());
+    }
 }
