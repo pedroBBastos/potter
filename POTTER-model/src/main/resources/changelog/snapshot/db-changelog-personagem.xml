@@ -40,4 +40,11 @@
         <addUniqueConstraint columnNames="name, house" constraintName="UKhr1qgsfb308321lt8itimnl8b" tableName="personagem"/>
     </changeSet>
 
+    <changeSet author="PedroBastos (generated)" id="1626740406806-1">
+        <addUniqueConstraint columnNames="name" constraintName="UK53jasxjb5yh80231g2h21wisx" tableName="personagem"/>
+    </changeSet>
+    <changeSet author="PedroBastos (generated)" id="1626740406806-2">
+        <dropUniqueConstraint constraintName="UKHR1QGSFB308321LT8ITIMNL8B" tableName="PERSONAGEM"/>
+    </changeSet>
+
 </databaseChangeLog>

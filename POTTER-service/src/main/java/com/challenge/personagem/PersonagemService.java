@@ -11,6 +11,7 @@ import com.challenge.repository.PersonagemRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
 
     public PersonagemDTO atualizarPersonagem(PersonagemUpdateDTO personagemUpdateDTO) {
         PersonagemEntity personagem = this.validateModificacao(personagemUpdateDTO);
-        personagem = this.atualizarPersonagemByDTO(personagem, personagemUpdateDTO);
+        personagem = this.atualizarPersonagemEntityByDTO(personagem, personagemUpdateDTO);
         return modelMapper.map(this.save(personagem), PersonagemDTO.class);
     }
 
@@ -43,15 +44,25 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
         this.delete(this.validateModificacao(personagemDTO));
     }
 
-    public List<PersonagemDTO> findAllPersonagemDTO() {
-        return this.findAll().stream()
+    public List<PersonagemDTO> findAllPersonagemDTO(String house) {
+        return this.findPersonagemEntities(house).stream()
                 .map(personagemEntity ->
                         modelMapper.map(personagemEntity, PersonagemDTO.class))
                 .collect(Collectors.toList());
     }
 
-    private PersonagemEntity atualizarPersonagemByDTO(PersonagemEntity personagemEntity,
-                                                      PersonagemUpdateDTO personagemUpdateDTO) {
+    private List<PersonagemEntity> findPersonagemEntities(String house) {
+        List<PersonagemEntity> personagemEntities;
+        if(house == null) {
+            personagemEntities = this.findAll();
+        } else {
+            personagemEntities = this.personagemRepository.findAllByHouse(house);
+        }
+        return personagemEntities;
+    }
+
+    private PersonagemEntity atualizarPersonagemEntityByDTO(PersonagemEntity personagemEntity,
+                                                            PersonagemUpdateDTO personagemUpdateDTO) {
         PersonagemEntity atualizado = modelMapper.map(personagemUpdateDTO, PersonagemEntity.class);
         atualizado.setId(personagemEntity.getId());
         atualizado.setDataCriacao(personagemEntity.getDataCriacao());
@@ -64,8 +75,7 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
     }
 
     private void validatePersonagemExistente(PersonagemCriacaoDTO personagemCriacaoDTO) {
-        if(this.personagemRepository.existsByNameAndHouse(personagemCriacaoDTO.getName(),
-                personagemCriacaoDTO.getHouse())) {
+        if(this.personagemRepository.existsByName(personagemCriacaoDTO.getName())) {
             throw new PersonagemException("Personagem já existente!");
         }
     }
@@ -73,8 +83,7 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
     private PersonagemEntity validateModificacao(PersonagemDTO personagemDTO) {
         this.validateNullTO(personagemDTO);
 
-        var personagemEntity = this.personagemRepository.findByNameAndHouse(personagemDTO.getName(),
-                personagemDTO.getHouse());
+        var personagemEntity = this.personagemRepository.findByName(personagemDTO.getName());
         if(personagemEntity == null)
             throw new PersonagemException("Personagem não encontrado!");
 

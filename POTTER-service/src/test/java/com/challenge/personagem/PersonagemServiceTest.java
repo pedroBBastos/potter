@@ -61,8 +61,7 @@ public class PersonagemServiceTest {
     @Test
     public void teste03_naoDeveSalvarPersonagemDTOJaExistente() {
         PersonagemCriacaoDTO personagemCriacaoDTO = DataGenerator.getPersonagemCriacaoDTO();
-        when(personagemRepository.existsByNameAndHouse("Harry Potter","Gryffindor"))
-                .thenReturn(true);
+        when(personagemRepository.existsByName("Harry Potter")).thenReturn(true);
 
         try {
             personagemService.criarNovoPersonagem(personagemCriacaoDTO);
@@ -79,7 +78,7 @@ public class PersonagemServiceTest {
     public void teste04_deveAtualizarPersonagemComSucesso() {
         PersonagemUpdateDTO personagemUpdateDTO = DataGenerator.getPersonagemUpdateDTO();
         PersonagemEntity personagemEmBanco = DataGenerator.getPersonagem();
-        when(personagemRepository.findByNameAndHouse("Harry Potter","Gryffindor"))
+        when(personagemRepository.findByName("Harry Potter"))
                 .thenReturn(personagemEmBanco);
         when(personagemRepository.save(any())).thenReturn(DataGenerator.getPersonagem());
 
@@ -109,7 +108,7 @@ public class PersonagemServiceTest {
     @Test
     public void teste06_deveValidarPersonagemExistenteEmAtualizacao() {
         PersonagemUpdateDTO personagemUpdateDTO = DataGenerator.getPersonagemUpdateDTO();
-        when(personagemRepository.findByNameAndHouse(any(), any()))
+        when(personagemRepository.findByName(any()))
                 .thenReturn(null);
 
         try {
@@ -127,8 +126,7 @@ public class PersonagemServiceTest {
     public void teste07_deveDeletarPersonagemComSucesso() {
         PersonagemDTO personagemDTO = DataGenerator.getPersonagemDTO();
         PersonagemEntity personagemEmBanco = DataGenerator.getPersonagem();
-        when(personagemRepository.findByNameAndHouse("Harry Potter","Gryffindor"))
-                .thenReturn(personagemEmBanco);
+        when(personagemRepository.findByName("Harry Potter")).thenReturn(personagemEmBanco);
 
         personagemService.deletePersonagem(personagemDTO);
 
@@ -152,7 +150,7 @@ public class PersonagemServiceTest {
     @Test
     public void teste09_deveValidarPersonagemExistenteEmRemocao() {
         PersonagemDTO personagemDTO = DataGenerator.getPersonagemDTO();
-        when(personagemRepository.findByNameAndHouse(any(), any()))
+        when(personagemRepository.findByName(any()))
                 .thenReturn(null);
 
         try {
@@ -169,8 +167,16 @@ public class PersonagemServiceTest {
     @Test
     public void teste10_deveValidarBuscaDeTodosOsPersonagens() {
         when(personagemRepository.findAll()).thenReturn(DataGenerator.getPersonagemList());
-        personagemService.findAllPersonagemDTO();
+        personagemService.findAllPersonagemDTO(null);
         verify(personagemRepository, times(1)).findAll();
+        verify(modelMapper, atLeast(1)).map(any(), any());
+    }
+
+    @Test
+    public void teste11_deveValidarBuscaDeTodosOsPersonagensPorCasa() {
+        when(personagemRepository.findAllByHouse("Gryffindor")).thenReturn(DataGenerator.getPersonagemList());
+        personagemService.findAllPersonagemDTO("Gryffindor");
+        verify(personagemRepository, times(1)).findAllByHouse("Gryffindor");
         verify(modelMapper, atLeast(1)).map(any(), any());
     }
 }

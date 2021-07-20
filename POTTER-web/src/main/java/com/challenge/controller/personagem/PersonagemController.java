@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/personagem")
@@ -38,19 +39,14 @@ public class PersonagemController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PersonagemDTO>> findAll() {
-        return new ResponseEntity<>(this.personagemService.findAllPersonagemDTO(), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "{house}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PersonagemDTO> findByHouse(@PathVariable(value = "house") String house) {
-        // TODO
-        return null;
+    public ResponseEntity<List<PersonagemDTO>> findAll(@RequestParam(required = false) String house) {
+        // TODO -> filtragem por diversos parametros pela URL: findAll(@RequestParam Map<String, String> params)
+        return new ResponseEntity<>(this.personagemService.findAllPersonagemDTO(house), HttpStatus.OK);
     }
 
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PersonagemDTO> findByObject(@RequestBody PersonagemCriacaoDTO personagemCriacaoDTO) {
-        // TODO
-        return null;
+    public ResponseEntity<PersonagemDTO> findByObject(@RequestBody PersonagemDTO personagemDTO) {
+        // TODO -> filtragem por DTO passado como parametro
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }
