@@ -92,14 +92,15 @@ public class PersonagemServiceTest {
         when(personagemRepository.findByName("Harry Potter"))
                 .thenReturn(personagemEmBanco);
         when(personagemRepository.save(any())).thenReturn(DataGenerator.getPersonagem());
+        when(potterAPIHousesClient.getHouses()).thenReturn(DataGenerator.getPotterHouses());
 
         personagemUpdateDTO.setPatronus("Patronous-updated");
         personagemService.atualizarPersonagem(personagemUpdateDTO);
 
         verify(personagemRepository).save(personagemEntityCaptor.capture());
-
         PersonagemEntity capturedPersonagem = personagemEntityCaptor.getValue();
         assertEquals("Patronous-updated", capturedPersonagem.getPatronus());
+        verify(potterAPIHousesClient, times(1)).getHouses();
     }
 
     @Test
@@ -223,5 +224,37 @@ public class PersonagemServiceTest {
         verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
         verify(modelMapper, times(1)).map(any(), any());
         verify(potterAPIHousesClient, times(0)).getHouses();
+    }
+
+    @Test
+    public void teste14_deveValidarChaveNomeNaoInformadaEmAtualizacao() {
+        PersonagemUpdateDTO personagemUpdateDTO = DataGenerator.getPersonagemUpdateDTO();
+        personagemUpdateDTO.setName(null);
+
+        try {
+            personagemService.atualizarPersonagem(personagemUpdateDTO);
+            fail();
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Chave 'name' não informada!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
+        verify(modelMapper, times(0)).map(any(), any());
+    }
+
+    @Test
+    public void teste15_deveValidarChaveNomeNaoInformadaEmRemocao() {
+        PersonagemDTO personagemUpdateDTO = DataGenerator.getPersonagemDTO();
+        personagemUpdateDTO.setName(null);
+
+        try {
+            personagemService.deletePersonagem(personagemUpdateDTO);
+            fail();
+        } catch (ParametroInvalidoException exception) {
+            assertEquals("Chave 'name' não informada!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).delete(any(PersonagemEntity.class));
+        verify(modelMapper, times(0)).map(any(), any());
     }
 }

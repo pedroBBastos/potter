@@ -36,6 +36,8 @@ public class PersonagemService {
 
     public PersonagemDTO atualizarPersonagem(PersonagemUpdateDTO personagemUpdateDTO) {
         PersonagemEntity personagem = this.validateModificacao(personagemUpdateDTO);
+        this.validateCasaExistente(personagemUpdateDTO.getHouse());
+
         personagem = this.atualizarPersonagemEntityByDTO(personagem, personagemUpdateDTO);
         return modelMapper.map(this.personagemRepository.save(personagem), PersonagemDTO.class);
     }
@@ -95,6 +97,7 @@ public class PersonagemService {
 
     private PersonagemEntity validateModificacao(PersonagemDTO personagemDTO) {
         this.validateNullTO(personagemDTO);
+        this.validateNomeNull(personagemDTO.getName());
 
         var personagemEntity = this.personagemRepository.findByName(personagemDTO.getName());
         if(personagemEntity == null) {
@@ -107,6 +110,12 @@ public class PersonagemService {
     private void validateNullTO(PersonagemDTO personagemDTO) {
         if(personagemDTO == null) {
             throw new ParametroInvalidoException("Objeto nulo!");
+        }
+    }
+
+    private void validateNomeNull(String nome) {
+        if(nome == null) {
+            throw new ParametroInvalidoException("Chave 'name' não informada!");
         }
     }
 
