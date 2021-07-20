@@ -1,5 +1,6 @@
 package com.challenge.exceptionhandler;
 
+import com.challenge.exception.CasaException;
 import com.challenge.exception.ParametroInvalidoException;
 import com.challenge.exception.PersonagemException;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,13 @@ public class PotterExceptionHandler extends ResponseEntityExceptionHandler {
                                                                                ServletWebRequest request) {
         return new ResponseEntity<>(ErrorMessage.builder().message(ex.getMessage())
                 .details(request.getDescription(false)).build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CasaException.class)
+    public final ResponseEntity<ErrorMessage> handleCasaException(CasaException ex,
+                                                                  ServletWebRequest request) {
+        return new ResponseEntity<>(ErrorMessage.builder().message(ex.getMessage())
+                .details(request.getDescription(false)).build(), HttpStatus.NOT_FOUND);
     }
 
 }

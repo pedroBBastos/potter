@@ -4,6 +4,7 @@ import com.challenge.CrudService;
 import com.challenge.client.PotterAPIHousesClient;
 import com.challenge.dto.*;
 import com.challenge.entity.PersonagemEntity;
+import com.challenge.exception.CasaException;
 import com.challenge.exception.ParametroInvalidoException;
 import com.challenge.exception.PersonagemException;
 import com.challenge.repository.PersonagemRepository;
@@ -73,6 +74,7 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
     private void validateCriacaoTO(PersonagemCriacaoDTO personagemCriacaoDTO) {
         this.validateNullTO(personagemCriacaoDTO);
         this.validatePersonagemExistente(personagemCriacaoDTO);
+        this.validateCasaExistente(personagemCriacaoDTO.getHouse());
     }
 
     private void validatePersonagemExistente(PersonagemCriacaoDTO personagemCriacaoDTO) {
@@ -81,12 +83,19 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
         }
     }
 
+    private CasasDTO validateCasaExistente(String casaId) {
+        return this.potterAPIHousesClient.getHouses().getHouses().stream()
+                .filter(casasDTO -> casasDTO.getId().equals(casaId))
+                .findFirst().orElseThrow(() -> new CasaException(String.format("Casa '%s' não encontrada!", casaId)));
+    }
+
     private PersonagemEntity validateModificacao(PersonagemDTO personagemDTO) {
         this.validateNullTO(personagemDTO);
 
         var personagemEntity = this.personagemRepository.findByName(personagemDTO.getName());
-        if(personagemEntity == null)
+        if(personagemEntity == null) {
             throw new PersonagemException("Personagem não encontrado!");
+        }
 
         return personagemEntity;
     }
@@ -95,9 +104,5 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
         if(personagemDTO == null) {
             throw new ParametroInvalidoException("Objeto nulo!");
         }
-    }
-
-    public RetornoDTO testeBuscaCasas() {
-        return this.potterAPIHousesClient.getHouses();
     }
 }

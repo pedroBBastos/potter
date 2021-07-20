@@ -1,10 +1,12 @@
 package com.challenge.personagem;
 
+import com.challenge.client.PotterAPIHousesClient;
 import com.challenge.data.DataGenerator;
 import com.challenge.dto.PersonagemCriacaoDTO;
 import com.challenge.dto.PersonagemDTO;
 import com.challenge.dto.PersonagemUpdateDTO;
 import com.challenge.entity.PersonagemEntity;
+import com.challenge.exception.CasaException;
 import com.challenge.exception.ParametroInvalidoException;
 import com.challenge.exception.PersonagemException;
 import com.challenge.repository.PersonagemRepository;
@@ -25,6 +27,8 @@ public class PersonagemServiceTest {
 
     @Mock
     private PersonagemRepository personagemRepository;
+    @Mock
+    private PotterAPIHousesClient potterAPIHousesClient;
     @Spy
     private ModelMapper modelMapper;
     @InjectMocks
@@ -37,10 +41,12 @@ public class PersonagemServiceTest {
     public void teste01_deveSalvarPersonagemViaDTOComSucesso() {
         PersonagemCriacaoDTO personagemCriacaoDTO = DataGenerator.getPersonagemCriacaoDTO();
         when(personagemRepository.save(any())).thenReturn(DataGenerator.getPersonagem());
+        when(potterAPIHousesClient.getHouses()).thenReturn(DataGenerator.getPotterHouses());
 
         personagemService.criarNovoPersonagem(personagemCriacaoDTO);
 
         verify(personagemRepository, times(1)).save(any(PersonagemEntity.class));
+        verify(potterAPIHousesClient, times(1)).getHouses();
         verify(modelMapper, times(1)).map(any(), any());
     }
 
@@ -178,5 +184,24 @@ public class PersonagemServiceTest {
         personagemService.findAllPersonagemDTO("Gryffindor");
         verify(personagemRepository, times(1)).findAllByHouse("Gryffindor");
         verify(modelMapper, atLeast(1)).map(any(), any());
+    }
+
+    @Test
+    public void teste12_naoDeveSalvarPersonagemDTOCasaInexistente() {
+
+        PersonagemCriacaoDTO personagemCriacaoDTO = DataGenerator.getPersonagemCriacaoDTO();
+        personagemCriacaoDTO.setHouse("casaAmarela");
+        when(potterAPIHousesClient.getHouses()).thenReturn(DataGenerator.getPotterHouses());
+
+        try {
+            personagemService.criarNovoPersonagem(personagemCriacaoDTO);
+            fail();
+        } catch (CasaException exception) {
+            assertEquals("Casa 'casaAmarela' não encontrada!", exception.getMessage());
+        }
+
+        verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
+        verify(modelMapper, times(0)).map(any(), any());
+        verify(potterAPIHousesClient, times(1)).getHouses();
     }
 }
