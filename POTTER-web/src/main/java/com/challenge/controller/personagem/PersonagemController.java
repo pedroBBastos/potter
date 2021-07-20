@@ -46,9 +46,4 @@ public class PersonagemController {
         // TODO -> filtragem por DTO passado como parametro
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
-
-    @GetMapping(value = "/testeFindCasas", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RetornoDTO> findAllCasas() {
-        return new ResponseEntity<>(this.personagemService.testeBuscaCasas(), HttpStatus.OK);
-    }
 }
