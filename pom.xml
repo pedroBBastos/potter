@@ -8,6 +8,7 @@
 		<module>POTTER-model</module>
 		<module>POTTER-service</module>
 		<module>POTTER-web</module>
+        <module>POTTER-casas-client</module>
 	</modules>
 
 	<parent>

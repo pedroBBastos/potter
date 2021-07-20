@@ -1,8 +1,6 @@
 package com.challenge.controller.personagem;
 
-import com.challenge.dto.PersonagemCriacaoDTO;
-import com.challenge.dto.PersonagemDTO;
-import com.challenge.dto.PersonagemUpdateDTO;
+import com.challenge.dto.*;
 import com.challenge.personagem.PersonagemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/personagem")
@@ -48,5 +45,10 @@ public class PersonagemController {
     public ResponseEntity<PersonagemDTO> findByObject(@RequestBody PersonagemDTO personagemDTO) {
         // TODO -> filtragem por DTO passado como parametro
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @GetMapping(value = "/testeFindCasas", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RetornoDTO> findAllCasas() {
+        return new ResponseEntity<>(this.personagemService.testeBuscaCasas(), HttpStatus.OK);
     }
 }

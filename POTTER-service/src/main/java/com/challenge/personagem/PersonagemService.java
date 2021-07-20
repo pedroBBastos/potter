@@ -1,9 +1,8 @@
 package com.challenge.personagem;
 
 import com.challenge.CrudService;
-import com.challenge.dto.PersonagemCriacaoDTO;
-import com.challenge.dto.PersonagemDTO;
-import com.challenge.dto.PersonagemUpdateDTO;
+import com.challenge.client.PotterAPIHousesClient;
+import com.challenge.dto.*;
 import com.challenge.entity.PersonagemEntity;
 import com.challenge.exception.ParametroInvalidoException;
 import com.challenge.exception.PersonagemException;
@@ -11,7 +10,6 @@ import com.challenge.repository.PersonagemRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,12 +18,15 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
 
     private ModelMapper modelMapper;
     private PersonagemRepository personagemRepository;
+    private PotterAPIHousesClient potterAPIHousesClient;
 
     public PersonagemService(PersonagemRepository personagemRepository,
-                             ModelMapper modelMapper) {
+                             ModelMapper modelMapper,
+                             PotterAPIHousesClient potterAPIHousesClient) {
         super(personagemRepository);
         this.personagemRepository = personagemRepository;
         this.modelMapper = modelMapper;
+        this.potterAPIHousesClient = potterAPIHousesClient;
     }
 
     public PersonagemDTO criarNovoPersonagem(PersonagemCriacaoDTO personagemCriacaoDTO) {
@@ -94,5 +95,9 @@ public class PersonagemService extends CrudService<PersonagemEntity> {
         if(personagemDTO == null) {
             throw new ParametroInvalidoException("Objeto nulo!");
         }
+    }
+
+    public RetornoDTO testeBuscaCasas() {
+        return this.potterAPIHousesClient.getHouses();
     }
 }
