@@ -17,6 +17,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
+
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -31,6 +34,8 @@ public class PersonagemServiceTest {
     private PotterAPIHousesClient potterAPIHousesClient;
     @Spy
     private ModelMapper modelMapper;
+    @Spy
+    private ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     @InjectMocks
     private PersonagemService personagemService;
 
@@ -47,7 +52,7 @@ public class PersonagemServiceTest {
 
         verify(personagemRepository, times(1)).save(any(PersonagemEntity.class));
         verify(potterAPIHousesClient, times(1)).getHouses();
-        verify(modelMapper, times(1)).map(any(), any());
+        verify(modelMapper, times(2)).map(any(), any());
     }
 
     @Test
@@ -201,7 +206,22 @@ public class PersonagemServiceTest {
         }
 
         verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
-        verify(modelMapper, times(0)).map(any(), any());
+        verify(modelMapper, times(1)).map(any(), any());
         verify(potterAPIHousesClient, times(1)).getHouses();
+    }
+
+    @Test
+    public void teste13_deveVerificarCOlunasNulasAoSalvarNovoPersonagem() {
+
+        PersonagemCriacaoDTO personagemCriacaoDTO = DataGenerator.getPersonagemCriacaoColunasNulasDTO();
+
+        try {
+            personagemService.criarNovoPersonagem(personagemCriacaoDTO);
+            fail();
+        } catch (ParametroInvalidoException ignored) {}
+
+        verify(personagemRepository, times(0)).save(any(PersonagemEntity.class));
+        verify(modelMapper, times(1)).map(any(), any());
+        verify(potterAPIHousesClient, times(0)).getHouses();
     }
 }

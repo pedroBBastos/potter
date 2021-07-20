@@ -44,6 +44,7 @@ public class PersonagemController {
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PersonagemDTO> findByObject(@RequestBody PersonagemDTO personagemDTO) {
         // TODO -> filtragem por DTO passado como parametro
+        // TODO -> devolver BAD REQUEST caso nome esteja com nulo ou vazio
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }

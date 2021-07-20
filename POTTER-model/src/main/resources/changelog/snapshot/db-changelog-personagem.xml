@@ -47,4 +47,11 @@
         <dropUniqueConstraint constraintName="UKHR1QGSFB308321LT8ITIMNL8B" tableName="PERSONAGEM"/>
     </changeSet>
 
+    <changeSet author="PedroBastos (generated)" id="1626817013615-1">
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="house" tableName="personagem"/>
+    </changeSet>
+    <changeSet author="PedroBastos (generated)" id="1626817013615-2">
+        <addNotNullConstraint columnDataType="varchar(255)" columnName="name" tableName="personagem"/>
+    </changeSet>
+
 </databaseChangeLog>

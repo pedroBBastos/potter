@@ -7,31 +7,31 @@ import com.challenge.exception.CasaException;
 import com.challenge.exception.ParametroInvalidoException;
 import com.challenge.exception.PersonagemException;
 import com.challenge.repository.PersonagemRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ValidatorFactory;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class PersonagemService {
 
-    private ModelMapper modelMapper;
-    private PersonagemRepository personagemRepository;
-    private PotterAPIHousesClient potterAPIHousesClient;
+    private final ModelMapper modelMapper;
+    private final PersonagemRepository personagemRepository;
+    private final PotterAPIHousesClient potterAPIHousesClient;
+    private final ValidatorFactory validatorFactory;
 
-    public PersonagemService(PersonagemRepository personagemRepository,
-                             ModelMapper modelMapper,
-                             PotterAPIHousesClient potterAPIHousesClient) {
-        this.personagemRepository = personagemRepository;
-        this.modelMapper = modelMapper;
-        this.potterAPIHousesClient = potterAPIHousesClient;
-    }
 
     public PersonagemDTO criarNovoPersonagem(PersonagemCriacaoDTO personagemCriacaoDTO) {
-        this.validateCriacaoTO(personagemCriacaoDTO);
-        this.personagemRepository.save(modelMapper.map(personagemCriacaoDTO, PersonagemEntity.class));
-        return personagemCriacaoDTO;
+        PersonagemEntity personagemEntity = this.validateCriacaoTO(personagemCriacaoDTO);
+        return modelMapper.map(this.personagemRepository.save(personagemEntity), PersonagemDTO.class);
     }
 
     public PersonagemDTO atualizarPersonagem(PersonagemUpdateDTO personagemUpdateDTO) {
@@ -52,13 +52,10 @@ public class PersonagemService {
     }
 
     private List<PersonagemEntity> findPersonagemEntities(String house) {
-        List<PersonagemEntity> personagemEntities;
         if(house == null) {
-            personagemEntities = this.personagemRepository.findAll();
-        } else {
-            personagemEntities = this.personagemRepository.findAllByHouse(house);
+            return this.personagemRepository.findAll();
         }
-        return personagemEntities;
+        return  this.personagemRepository.findAllByHouse(house);
     }
 
     private PersonagemEntity atualizarPersonagemEntityByDTO(PersonagemEntity personagemEntity,
@@ -69,10 +66,15 @@ public class PersonagemService {
         return atualizado;
     }
 
-    private void validateCriacaoTO(PersonagemCriacaoDTO personagemCriacaoDTO) {
+    private PersonagemEntity validateCriacaoTO(PersonagemCriacaoDTO personagemCriacaoDTO) {
         this.validateNullTO(personagemCriacaoDTO);
         this.validatePersonagemExistente(personagemCriacaoDTO);
-        this.validateCasaExistente(personagemCriacaoDTO.getHouse());
+
+        var personagemEntity = this.novoPersonagemByDTO(personagemCriacaoDTO);
+        this.validateColunasInvalidas(personagemEntity);
+
+        this.validateCasaExistente(personagemEntity.getHouse());
+        return personagemEntity;
     }
 
     private void validatePersonagemExistente(PersonagemCriacaoDTO personagemCriacaoDTO) {
@@ -85,6 +87,10 @@ public class PersonagemService {
         return this.potterAPIHousesClient.getHouses().getHouses().stream()
                 .filter(casasDTO -> casasDTO.getId().equals(casaId))
                 .findFirst().orElseThrow(() -> new CasaException(String.format("Casa '%s' não encontrada!", casaId)));
+    }
+
+    private PersonagemEntity novoPersonagemByDTO(PersonagemCriacaoDTO personagemCriacaoDTO) {
+        return modelMapper.map(personagemCriacaoDTO, PersonagemEntity.class);
     }
 
     private PersonagemEntity validateModificacao(PersonagemDTO personagemDTO) {
@@ -101,6 +107,14 @@ public class PersonagemService {
     private void validateNullTO(PersonagemDTO personagemDTO) {
         if(personagemDTO == null) {
             throw new ParametroInvalidoException("Objeto nulo!");
+        }
+    }
+
+    private void validateColunasInvalidas(PersonagemEntity personagemEntity) {
+        Set<ConstraintViolation<PersonagemEntity>> validate =
+                this.validatorFactory.getValidator().validate(personagemEntity);
+        if(!validate.isEmpty()) {
+            throw new ParametroInvalidoException(new ArrayList<>(validate).get(0).getMessage());
         }
     }
 }
