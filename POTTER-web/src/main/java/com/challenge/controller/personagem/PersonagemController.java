@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/personagem")
-public class PersonagemController {
+public class PersonagemController implements IPersonagemController {
 
     private PersonagemService personagemService;
 
@@ -46,7 +46,7 @@ public class PersonagemController {
         return new ResponseEntity<>(this.personagemService.findAll(house), HttpStatus.OK);
     }
 
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/findByDTO", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PersonagemDTO> findByObject(@RequestBody PersonagemDTO personagemDTO) {
         return new ResponseEntity<>(this.personagemService.findByPersonagemDTO(personagemDTO), HttpStatus.OK);
     }

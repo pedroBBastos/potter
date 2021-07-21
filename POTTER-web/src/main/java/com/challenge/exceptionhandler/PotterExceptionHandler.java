@@ -19,7 +19,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  */
 
 @ControllerAdvice
-@RestController
 public class PotterExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(PersonagemException.class)
