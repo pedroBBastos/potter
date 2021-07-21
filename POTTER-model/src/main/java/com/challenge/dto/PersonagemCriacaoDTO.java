@@ -1,9 +1,7 @@
 package com.challenge.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.util.Date;
 
@@ -13,6 +11,8 @@ import java.util.Date;
  */
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class PersonagemCriacaoDTO extends PersonagemDTO {
 
