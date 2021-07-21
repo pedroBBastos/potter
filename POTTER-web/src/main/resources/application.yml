@@ -25,3 +25,8 @@ spring:
   h2:
     console:
       enabled: true
+---
+
+potterApi:
+  url: http://us-central1-rh-challenges.cloudfunctions.net/potterApi
+  apiKeyValue: ${API_KEY}
