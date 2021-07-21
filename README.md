@@ -15,7 +15,7 @@ Para rodar a aplicação, utilize o comando abaixo:
 docker run -it -p 8080:8080 potter/web
 ```
 
-Após a aplicação iniciar, acesse a documentação da API em http://localhost:8080/challenge/swagger-ui.html
+Após a aplicação iniciar, acesse a documentação da API em http://localhost:8080/challenge/swagger-ui.html#/
 Será possível testar a API a partir do próprio swagger.
 
 ---
