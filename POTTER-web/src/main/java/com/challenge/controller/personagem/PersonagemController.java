@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller contendo endpoints para CRUD de personagens
+ * @author PedroBastos
+ */
+
 @RestController
 @RequestMapping("/api/personagem")
 public class PersonagemController {

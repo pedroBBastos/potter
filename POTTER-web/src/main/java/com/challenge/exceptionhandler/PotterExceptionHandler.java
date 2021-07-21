@@ -11,6 +11,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+/**
+ * Classe com o objetivo de tratar todas as exceções lançadas pela aplicação.
+ * Cada método trata uma exceção específica, devolvendo resposta com status HTTP especificado.
+ * 
+ * @author PedroBastos
+ */
+
 @ControllerAdvice
 @RestController
 public class PotterExceptionHandler extends ResponseEntityExceptionHandler {
