@@ -8,7 +8,7 @@ Execute o comando abaixo na raiz do projeto para criar a imagem Docker da aplica
 ```
 docker build -t potter/web .
 ```
-O código fonte e os arquivos .pom serão copiados para o container e todo o download de dependências e build da aplicação será realizado dentro do container.
+O código fonte e os arquivos .pom serão copiados para e todo o download de dependências e build da aplicação será realizado na geração da imagem.
 
 Para rodar a aplicação, utilize o comando abaixo:
 ```
