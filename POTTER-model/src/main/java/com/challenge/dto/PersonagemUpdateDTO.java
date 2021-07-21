@@ -7,6 +7,10 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
+/**
+ * DTO usado como interface durante atualização de um personagem.
+ * @author PedroBastos
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class PersonagemUpdateDTO extends PersonagemDTO {

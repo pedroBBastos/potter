@@ -5,6 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO base que representa um personagem. Criado para interfacear comunicação da API.
+ * @author PedroBastos
+ */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
