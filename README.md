@@ -31,6 +31,6 @@ Será possível testar a API a partir do próprio swagger.
 
 Pontos que ficaram em aberto para serem implementados
 
-- Tratamento de estado da potterApi (API utilizada para buscar as casas)
+- Melhor tratamento de estado da potterApi (API utilizada para buscar as casas)
 - Testes de integração
 - Uso do Spring Cache

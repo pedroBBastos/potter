@@ -3,6 +3,7 @@ package com.challenge.exceptionhandler;
 import com.challenge.exception.CasaException;
 import com.challenge.exception.ParametroInvalidoException;
 import com.challenge.exception.PersonagemException;
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -40,6 +41,15 @@ public class PotterExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   ServletWebRequest request) {
         return new ResponseEntity<>(ErrorMessage.builder().message(ex.getMessage())
                 .details(request.getDescription(false)).build(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {FeignException.class})
+    public final ResponseEntity<ErrorMessage> handleFeignException(FeignException ex,
+                                                                   ServletWebRequest request) {
+        return new ResponseEntity<>(ErrorMessage.builder().message("Não foi possível completar a requisição. Contate o administrador" +
+                " ou tente novamente mais tarde")
+                .details(request.getDescription(false))
+                .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
